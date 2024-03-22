@@ -26,6 +26,7 @@ def load_data(folder_path):
     return np.array(images), np.array(labels)
 
 
+
 clean_images, clean_labels = load_data(CLEAN_SINK_DIR)
 dirty_images, dirty_labels = load_data(DIRTY_SINK_DIR)
 
