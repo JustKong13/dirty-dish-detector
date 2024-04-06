@@ -3,8 +3,8 @@ from PIL import Image
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-CLEAN_SINK_DIR = './data/clean_sink'
-DIRTY_SINK_DIR = './data/dirty_sink'
+CLEAN_SINK_DIR = '../data/clean_sink'
+DIRTY_SINK_DIR = '../data/dirty_sink'
 
 
 def load_data(folder_path): 
@@ -13,7 +13,7 @@ def load_data(folder_path):
 
     for filename in os.listdir(folder_path): 
         img = Image.open(os.path.join(folder_path, filename))
-        img = img.resize((64, 64))
+        img = img.resize((256, 256))
         img = img.convert('L')
         # img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
         images.append(img)
@@ -34,5 +34,4 @@ X = np.concatenate((clean_images, dirty_images))
 y = np.concatenate((clean_labels, dirty_labels))
 
 
-xTr, xTe, yTr, yTe = train_test_split(X, y, test_size = 0.2, random_state = 1738)
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 1738)
