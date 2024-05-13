@@ -1,17 +1,17 @@
 import torch
+from os import listdir
+from os.path import isfile, join
 
 # Model
 model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
 
 # Images
-imgs = ["data/clean_sink/download-3.jpg"]  # batch of images
+imgs = [f for f in listdir("data/clean_sink") if isfile(join("data/clean_sink", f))]
 
-# Inference
-results = model(imgs)
+# # Inference
+# results = model(imgs)
 
-# Results
-results.print()
-results.save()  # or .show()
-
-results.xyxy[0]  # img1 predictions (tensor)
-results.pandas().xyxy[0]
+# # Results
+# results.print()
+# results.save()  # or .show()
+# print(results.pandas().xyxy[0])
