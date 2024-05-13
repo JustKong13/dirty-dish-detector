@@ -2,12 +2,12 @@ import os
 from PIL import Image
 import numpy as np
 from sklearn.model_selection import train_test_split
-from scripts.augmentation import Contrast, HorizontalFlip, Rotate, Shift
+from augmentation import Contrast, HorizontalFlip, Rotate, Shift
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-CLEAN_SINK_DIR = './data/clean_sink'
-DIRTY_SINK_DIR = './data/dirty_sink'
+CLEAN_SINK_DIR = '../../data/clean_sink'
+DIRTY_SINK_DIR = '../../data/dirty_sink'
 
 shift_transform = Shift(max_shift=10)
 contrast_transform = Contrast(min_contrast=0.3, max_contrast=1.0)
@@ -22,27 +22,30 @@ def load_data(folder_path):
 
     for filename in os.listdir(folder_path): 
         og_img = Image.open(os.path.join(folder_path, filename))
-        channeled_img = torch.tensor(og_img).permute(2, 0, 1)
 
         img = og_img.resize((256, 256))
         img = img.convert('RGB')
-        img = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
-        images.append(img)
+        img_tensor = torch.tensor(np.array(img) / 255.0, dtype=torch.float32) 
+        img_tensor = img_tensor.permute(2, 0, 1) 
+
+        images.append(img_tensor.numpy())
 
         if folder_path == CLEAN_SINK_DIR: 
             labels.append(1)
         else: 
             labels.append(0)
 
+        print(img_tensor.shape)
+
         for transform in train_transforms: 
-            transformed_img = transform(channeled_img)
+            transformed_img = transform(img_tensor)
             images.append(transformed_img.numpy())
             if folder_path == CLEAN_SINK_DIR: 
                 labels.append(1)
             else: 
                 labels.append(0)
 
-    return np.array(images), np.array(labels)
+    return np.stack(images), np.array(labels)
 
 
 
