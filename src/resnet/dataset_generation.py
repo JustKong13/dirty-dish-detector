@@ -36,7 +36,7 @@ X = np.concatenate((clean_images, dirty_images))
 y = np.concatenate((clean_labels, dirty_labels))
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 1738)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 1738)
 
 
 class SinkDataset(Dataset):
