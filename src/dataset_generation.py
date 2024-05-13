@@ -2,28 +2,45 @@ import os
 from PIL import Image
 import numpy as np
 from sklearn.model_selection import train_test_split
+from scripts.augmentation import Contrast, HorizontalFlip, Rotate, Shift
 import torch
 from torch.utils.data import Dataset, DataLoader
 
 CLEAN_SINK_DIR = '../data/clean_sink'
 DIRTY_SINK_DIR = '../data/dirty_sink'
 
+shift_transform = Shift(max_shift=10)
+contrast_transform = Contrast(min_contrast=0.3, max_contrast=1.0)
+rotate_transform = Rotate(max_angle=10)
+horizontal_flip_transform = HorizontalFlip(p=0.5)
+
+train_transforms = [shift_transform, contrast_transform, rotate_transform, horizontal_flip_transform]
 
 def load_data(folder_path): 
     images = []
     labels = []
 
     for filename in os.listdir(folder_path): 
-        img = Image.open(os.path.join(folder_path, filename))
-        img = img.resize((256, 256))
+        og_img = Image.open(os.path.join(folder_path, filename))
+        channeled_img = torch.tensor(og_img).permute(2, 0, 1)
+
+        img = og_img.resize((256, 256))
         img = img.convert('RGB')
-        # img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
-        images.append(img)
+        img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
+        images.append(img_array)
 
         if folder_path == CLEAN_SINK_DIR: 
             labels.append(1)
         else: 
             labels.append(0)
+
+        for transform in train_transforms: 
+            transformed_img = transform(channeled_img)
+            images.append(transformed_img.numpy())
+            if folder_path == CLEAN_SINK_DIR: 
+                labels.append(1)
+            else: 
+                labels.append(0)
 
     return np.array(images), np.array(labels)
 
@@ -48,12 +65,11 @@ class SinkDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, idx):
-        sample = {
-            'image': torch.tensor(self.X[idx], dtype=torch.float),
-            'label': torch.tensor(self.y[idx], dtype=torch.int)  # Change dtype if needed
-        }
-        return sample['image'], sample['label']
-    
+        d = {'image': torch.tensor(self.X[idx], dtype=torch.float),
+            'label': torch.tensor(self.y[idx], dtype=torch.float) }
+
+
+        return d['image'], d['label']
 
 train_dataset = SinkDataset(X_train, y_train)
 test_dataset = SinkDataset(X_test, y_test)
