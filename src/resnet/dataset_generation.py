@@ -5,8 +5,8 @@ from sklearn.model_selection import train_test_split
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-CLEAN_SINK_DIR = '../data/clean_sink'
-DIRTY_SINK_DIR = '../data/dirty_sink'
+CLEAN_SINK_DIR = './data/clean_sink'
+DIRTY_SINK_DIR = './data/dirty_sink'
 
 
 def load_data(folder_path): 
@@ -17,7 +17,7 @@ def load_data(folder_path):
         img = Image.open(os.path.join(folder_path, filename))
         img = img.resize((256, 256))
         img = img.convert('RGB')
-        # img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
+        img = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
         images.append(img)
 
         if folder_path == CLEAN_SINK_DIR: 
@@ -49,10 +49,10 @@ class SinkDataset(Dataset):
 
     def __getitem__(self, idx):
         sample = {
-            'image': torch.tensor(self.X[idx], dtype=torch.float),
+            'image': torch.tensor(self.X[idx], dtype=torch.float), # 3 x 256 x 256
             'label': torch.tensor(self.y[idx], dtype=torch.int)  # Change dtype if needed
         }
-        return sample['image'], sample['label']
+        return sample['image'].view([3,256,256]), sample['label']
     
 
 train_dataset = SinkDataset(X_train, y_train)
