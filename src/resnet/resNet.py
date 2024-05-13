@@ -16,7 +16,3 @@ class ResnetArchitecture(nn.Module):
         x = self.sigmoid(x)
         return x
     
-
-
-# TODO: data loader class for train and test data
-# TODO: Train and validation loop
