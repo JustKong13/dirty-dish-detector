@@ -69,7 +69,7 @@ class SinkDataset(Dataset):
             'label': torch.tensor(self.y[idx], dtype=torch.float) }
 
 
-        return d['image'], d['label']
+        return d['image'].view([3,256,256]), d['label']
 
 train_dataset = SinkDataset(X_train, y_train)
 test_dataset = SinkDataset(X_test, y_test)
