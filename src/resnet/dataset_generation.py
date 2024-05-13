@@ -26,13 +26,8 @@ def load_data(folder_path):
 
         img = og_img.resize((256, 256))
         img = img.convert('RGB')
-<<<<<<< HEAD:src/resnet/dataset_generation.py
         img = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
         images.append(img)
-=======
-        img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
-        images.append(img_array)
->>>>>>> 627385c5c1f2f2bdf623c895eadc77c407d0e563:src/dataset_generation.py
 
         if folder_path == CLEAN_SINK_DIR: 
             labels.append(1)
@@ -70,20 +65,11 @@ class SinkDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, idx):
-<<<<<<< HEAD:src/resnet/dataset_generation.py
-        sample = {
-            'image': torch.tensor(self.X[idx], dtype=torch.float), # 3 x 256 x 256
-            'label': torch.tensor(self.y[idx], dtype=torch.int)  # Change dtype if needed
-        }
-        return sample['image'].view([3,256,256]), sample['label']
-    
-=======
         d = {'image': torch.tensor(self.X[idx], dtype=torch.float),
             'label': torch.tensor(self.y[idx], dtype=torch.float) }
 
 
         return d['image'].view([3,256,256]), d['label']
->>>>>>> 627385c5c1f2f2bdf623c895eadc77c407d0e563:src/dataset_generation.py
 
 train_dataset = SinkDataset(X_train, y_train)
 test_dataset = SinkDataset(X_test, y_test)
