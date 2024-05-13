@@ -11,8 +11,8 @@ windowName = "Sink Detector"
 
 while True: 
     ret, frame = video.read()
-    bbox, label, conf = cv.detect_common_objects(frame, model='yolov4')
-    output_image = draw_bbox(frame, bbox, label, conf)
+    bbox, label, conf = cv.detect_common_objects(frame, model='yolov4-tiny')
+    output_image = draw_bbox(frame, bbox, label, confidence=conf) # why isnt confidence percentage showing up ugh
 
     cv2.imshow(windowName, output_image)
 
