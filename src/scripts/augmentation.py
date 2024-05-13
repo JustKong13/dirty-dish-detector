@@ -6,12 +6,7 @@ import torch
 class Shift(object):
     """
     Shifts input image by random x amount between [-max_shift, max_shift]
-      and separate random y amount between [-max_shift, max_shift]. A positive
-      shift in the x- and y- direction corresponds to shifting the image right
-      and downwards, respectively.
-
-      Inputs:
-          max_shift  float; maximum magnitude amount to shift image in x and y directions.
+      and separate random y amount between [-max_shift, max_shift].
     """
 
     def __init__(self, max_shift=10):
@@ -61,12 +56,7 @@ class Shift(object):
 class Contrast(object):
     """
     Randomly adjusts the contrast of an image. Uniformly select a contrast factor from
-    [min_contrast, max_contrast]. Setting the contrast to 0 should set the intensity of all pixels to the
-    mean intensity of the original image while a contrast of 1 returns the original image.
-
-    Inputs:
-        min_contrast    non-negative float; minimum magnitude to set contrast
-        max_contrast    non-negative float; maximum magnitude to set contrast
+    [min_contrast, max_contrast]. 
 
     Returns:
         image        3 x H x W torch Tensor of image, with random contrast
@@ -78,14 +68,6 @@ class Contrast(object):
         self.max_contrast = max_contrast
 
     def __call__(self, image):
-        """
-        Inputs:
-            image         3 x H x W image as torch Tensor
-
-        Returns:
-            shift_image   3 x H x W torch Tensor of image, with random contrast
-                          adjustment
-        """
         image = image.numpy()
 
         _, H, W = image.shape
@@ -102,12 +84,10 @@ class Contrast(object):
 
 class Rotate(object):
     """
-    Rotates input image by random angle within [-max_angle, max_angle]. Positive angle corresponds to
-    counter-clockwise rotation
+    Rotates input image by random angle within [-max_angle, max_angle]. 
 
     Inputs:
         max_angle  maximum magnitude of angle rotation, in degrees
-
 
     """
 
@@ -115,15 +95,6 @@ class Rotate(object):
         self.max_angle = max_angle
 
     def __call__(self, image):
-        """
-        Inputs:
-            image           image as torch Tensor
-
-        Returns:
-            rotated_image   image as torch Tensor; rotated by random angle
-                            between [-max_angle, max_angle].
-                            Pixels outside original image boundary set to 0 (black).
-        """
         image = image.numpy()
         _, H, W = image.shape
 
@@ -151,14 +122,6 @@ class HorizontalFlip(object):
         self.p = p
 
     def __call__(self, image):
-        """
-        Inputs:
-            image           image as torch Tensor
-
-        Returns:
-            flipped_image   image as torch Tensor flipped horizontally with
-                            probability p, original image otherwise.
-        """
         image = image.numpy()
         _, H, W = image.shape
 
