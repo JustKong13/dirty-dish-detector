@@ -1,3 +1,5 @@
+### This file initializes the model we will be using to complete the task
+
 import torch 
 from torchvision.models import resnet50, ResNet50_Weights
 from torch import nn

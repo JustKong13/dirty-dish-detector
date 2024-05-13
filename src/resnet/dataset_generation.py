@@ -6,8 +6,8 @@ from scripts.augmentation import Contrast, HorizontalFlip, Rotate, Shift
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-CLEAN_SINK_DIR = '../data/clean_sink'
-DIRTY_SINK_DIR = '../data/dirty_sink'
+CLEAN_SINK_DIR = './data/clean_sink'
+DIRTY_SINK_DIR = './data/dirty_sink'
 
 shift_transform = Shift(max_shift=10)
 contrast_transform = Contrast(min_contrast=0.3, max_contrast=1.0)
@@ -26,8 +26,8 @@ def load_data(folder_path):
 
         img = og_img.resize((256, 256))
         img = img.convert('RGB')
-        img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
-        images.append(img_array)
+        img = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
+        images.append(img)
 
         if folder_path == CLEAN_SINK_DIR: 
             labels.append(1)
@@ -53,7 +53,7 @@ X = np.concatenate((clean_images, dirty_images))
 y = np.concatenate((clean_labels, dirty_labels))
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 1738)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 1738)
 
 
 class SinkDataset(Dataset):
