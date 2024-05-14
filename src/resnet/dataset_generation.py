@@ -22,30 +22,31 @@ def load_data(folder_path):
 
     for filename in os.listdir(folder_path): 
         og_img = Image.open(os.path.join(folder_path, filename))
-
+    
         img = og_img.resize((256, 256))
         img = img.convert('RGB')
-        img_tensor = torch.tensor(np.array(img) / 255.0, dtype=torch.float32) 
-        img_tensor = img_tensor.permute(2, 0, 1) 
+        img = np.array(img) / 255.0
 
-        images.append(img_tensor.numpy())
+        images.append(img)
 
         if folder_path == CLEAN_SINK_DIR: 
             labels.append(1)
         else: 
             labels.append(0)
 
-        print(img_tensor.shape)
+        img_tensor = torch.tensor(np.array(img), dtype=torch.float32) 
+        img_tensor = img_tensor.permute(2, 0, 1) 
 
         for transform in train_transforms: 
-            transformed_img = transform(img_tensor)
-            images.append(transformed_img.numpy())
+            transformed_img = transform(img_tensor) # result of transform is 3 x h x w
+            channel_last_img = transformed_img.permute(1, 2, 0)
+            images.append(channel_last_img.numpy())
             if folder_path == CLEAN_SINK_DIR: 
                 labels.append(1)
             else: 
                 labels.append(0)
 
-    return np.stack(images), np.array(labels)
+    return np.array(images), np.array(labels)
 
 
 
@@ -56,7 +57,7 @@ X = np.concatenate((clean_images, dirty_images))
 y = np.concatenate((clean_labels, dirty_labels))
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 1738)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 1738)
 
 
 class SinkDataset(Dataset):

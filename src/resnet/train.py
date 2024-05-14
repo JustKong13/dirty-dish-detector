@@ -9,20 +9,23 @@ import copy
 
 
 def val(model, val_data_loader, criterion):
+    model.eval()
     val_running_loss = 0
-    accuracy = 0
-    counter = 0
+    total_correct = 0
+    total_samples = 0
+
     with torch.no_grad():
-        for i, (inputs, labels) in enumerate(val_data_loader, 0):
+        for inputs, labels in val_data_loader:
             outputs = model(inputs)
             loss = criterion(outputs, labels.to(torch.long))
             val_running_loss += loss.item()
-            output_decisions = torch.argmax(outputs, dim=1)
-            accuracy = torch.sum(output_decisions == labels)
-            counter += 1 
-    accuracy = accuracy / counter
+            predictions = outputs.argmax(dim=1, keepdim=True)
+            total_correct += predictions.eq(labels.view_as(predictions)).sum().item()
+            total_samples += labels.size(0)
 
-    return val_running_loss, accuracy
+    accuracy = total_correct / total_samples
+
+    return val_running_loss / len(val_data_loader), accuracy
 
 def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
     train_loss_arr = []

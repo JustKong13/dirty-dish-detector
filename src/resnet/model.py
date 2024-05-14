@@ -14,7 +14,6 @@ class ResnetArchitecture(nn.Module):
     def forward(self, x):
         x = self.resnet(x)
         x = self.fc1(x)
-        x = self.sigmoid(x)
         return x
     
 
