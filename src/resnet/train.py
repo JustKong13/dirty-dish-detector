@@ -35,6 +35,7 @@ def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
     count = 0
 
     result_model = None
+    min_val_loss = float('inf')
 
     for epoch in range(epochs):
         running_loss = 0.0
@@ -43,8 +44,8 @@ def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
         for batch_idx, (train_features, train_labels) in enumerate(data_loader):
             count += 1
 
-            if count >= 15:
-                break
+            # if count >= 15:
+            #     break
 
             optimizer.zero_grad()
             preds = model(train_features) # saving all of our features
@@ -65,7 +66,8 @@ def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
         val_loss_arr.append(val_loss)
         pred_arr.append(accuracy)
 
-        if val_loss < min(val_loss_arr): 
+        if val_loss < min_val_loss: 
+            min_val_loss = val_loss
             result_model = copy.deepcopy(model)
 
     print('Training finished.')
