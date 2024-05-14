@@ -6,7 +6,7 @@ import cv2
 import cvlib as cv
 from cvlib.object_detection import draw_bbox
 
-video = cv2.VideoCapture(0)
+video = cv2.VideoCapture(1)
 windowName = "Sink Detector"
 
 while True:
