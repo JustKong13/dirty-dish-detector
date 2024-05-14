@@ -7,6 +7,24 @@ from torch import optim
 import pickle as pkl
 import copy 
 
+def get_train_metrics(model, train_data_loader, criterion):
+    model.eval()
+    val_running_loss = 0
+    total_correct = 0
+    total_samples = 0
+
+    with torch.no_grad():
+        for inputs, labels in train_data_loader:
+            outputs = model(inputs)
+            loss = criterion(outputs, labels.to(torch.long))
+            val_running_loss += loss.item()
+            predictions = outputs.argmax(dim=1, keepdim=True)
+            total_correct += predictions.eq(labels.view_as(predictions)).sum().item()
+            total_samples += labels.size(0)
+
+    accuracy = total_correct / total_samples
+
+    return val_running_loss / len(train_data_loader), accuracy
 
 def val(model, val_data_loader, criterion):
     model.eval()
@@ -30,6 +48,7 @@ def val(model, val_data_loader, criterion):
 def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
     train_loss_arr = []
     val_loss_arr = []
+    train_pred_arr = []
     pred_arr = []
     running_loss = 0.0
     count = 0
@@ -62,6 +81,9 @@ def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
         train_loss_arr.append(train_loss)
         print("Current Loss at Epoch {}: ".format(epoch) + str(running_loss))
 
+        _, accuracy = get_train_metrics(model, data_loader, criterion)
+        train_pred_arr.append(accuracy)
+
         val_loss, accuracy = val(model, val_data_loader, criterion)
         val_loss_arr.append(val_loss)
         pred_arr.append(accuracy)
@@ -71,4 +93,4 @@ def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
             result_model = copy.deepcopy(model)
 
     print('Training finished.')
-    return train_loss_arr, val_loss_arr, pred_arr, result_model
+    return train_loss_arr, val_loss_arr, train_pred_arr, pred_arr, result_model
