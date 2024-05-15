@@ -26,7 +26,7 @@ def __draw_label(img, text, pos, bg_color):
 
 
 video = cv2.VideoCapture(0)
-video2 = cv2.VideoCapture(1)
+video2 = cv2.VideoCapture(0)
 windowName = "Sink Detector"
 
 start = time.time()
