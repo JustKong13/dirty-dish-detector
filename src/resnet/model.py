@@ -8,13 +8,25 @@ import torch.nn.functional as F
 class ResnetArchitecture(nn.Module):
     def __init__(self):
         super().__init__()
-        self.resnet = resnet50(ResNet50_Weights)
-        self.fc1 = nn.Linear(1000, 2)
-        self.sigmoid = F.sigmoid
+        self.resnet = resnet50(pretrained=True)
+
+        for param in self.resnet.parameters():
+            param.requires_grad = False
+
+        self.fc1 = nn.Linear(1000, 512)
+        self.bn1 = nn.BatchNorm1d(512)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.5)
+        self.fc2 = nn.Linear(512, 2)
+
     def forward(self, x):
         x = self.resnet(x)
         x = self.fc1(x)
-        x = self.sigmoid(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        
         return x
     
 

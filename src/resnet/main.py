@@ -3,9 +3,9 @@ from train import *
 from dataset_generation import * 
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=2e-4)
-epochs = 7
-train_loss, val_loss, pred, result_model = train(model, 
+optimizer = optim.Adam(model.parameters(), lr=2e-2)
+epochs = 8
+train_loss, val_loss, train_pred, pred, result_model = train(model, 
                                                  train_loader, 
                                                  test_loader, 
                                                  criterion, 
@@ -14,7 +14,8 @@ train_loss, val_loss, pred, result_model = train(model,
 
 print('train loss', train_loss)
 print('val_loss', val_loss)
-print('pred', pred)
+print("train accuracy", train_pred)
+print('validation accuracy', pred)
 
 
 pkl.dump(result_model, open('tuned_model_resnet.pkl', 'wb'))
