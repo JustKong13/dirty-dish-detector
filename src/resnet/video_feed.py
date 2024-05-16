@@ -69,7 +69,7 @@ while True:
         cv2.imwrite("frame.jpg", frame)
         start = time.time()
         processed_img = load_image(frame) 
-        dirty = classify_images(processed_img) 
+        dirty = not classify_images(processed_img) # model classifies clean as 1 and 0 as dirty
         if not past_dirty and dirty:
             ret2, frame2 = video2.read()
             cv2.imwrite("culprit/captured-" + str(num_caught) + ".jpg", frame2)

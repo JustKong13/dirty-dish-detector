@@ -45,7 +45,7 @@ class ResNetModel:
         with torch.no_grad():
             output = self.model(img)
             _, predicted = torch.max(output, 1)
-            dirty = predicted
+            dirty = not predicted # predicted is 1 if clean, 0 if dirty
 
         ##################################
 
