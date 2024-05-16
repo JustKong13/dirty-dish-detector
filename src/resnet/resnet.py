@@ -38,6 +38,7 @@ class ResNetModel:
         img = img.convert('RGB')
         img = np.array(img) / 255.0
         img = img.transpose((2, 0, 1))
+        img = torch.tensor(img, dtype=torch.float).unsqueeze(0)
 
         dirty = False
 
