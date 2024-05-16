@@ -7,7 +7,10 @@ import cv2
 import cvlib as cv
 from cvlib.object_detection import draw_bbox
 import pickle 
+import numpy as np
+import torch
 
+############# ResNet Model File Path #############
 filename = 'tuned_model_resnet.pkl'
 
 def __draw_label(img, text, pos, bg_color):
@@ -30,8 +33,29 @@ video2 = cv2.VideoCapture(1)
 windowName = "Sink Detector"
 
 start = time.time()
+
+################## Load ResNet Model ##################
 with open(filename, 'rb') as file:
     resNetModel = pickle.load(file)
+
+resNetModel.eval()
+################## Helper Functions ##################
+
+def load_image(img):
+    img = img.resize((256, 256))
+    img = img.convert('RGB')
+    img = np.array(img) / 255.0
+    img = img.transpose((2, 0, 1))
+    return img
+
+def classify_images(img):
+    with torch.no_grad():
+        output = resNetModel(img)
+        _, predicted = torch.max(output, 1)
+        return predicted
+    
+#######################################################
+
 num_caught = 0
 past_dirty = False
 dirty = False
@@ -44,8 +68,8 @@ while True:
     if time.time() - start > 1:
         cv2.imwrite("frame.jpg", frame)
         start = time.time()
-        resNetModel.load_image("frame.jpg", -1) # TODO: replace with nn.Module impl
-        dirty = resNetModel.classify_images()[0] # TODO: replace with nn.Module impl
+        processed_img = load_image(frame) 
+        dirty = classify_images(processed_img) 
         if not past_dirty and dirty:
             ret2, frame2 = video2.read()
             cv2.imwrite("culprit/captured-" + str(num_caught) + ".jpg", frame2)
