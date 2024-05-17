@@ -5,9 +5,10 @@ from os.path import isfile, join
 import pickle
 import numpy as np
 from PIL import Image
+from dataset_generation import *
 
 # Model
-filename = 'tuned_model_resnet.pkl'
+filename = '5_17_tuned_model_resnet.pkl'
 with open(filename, 'rb') as file:
   resNetModel = pickle.load(file)
 
@@ -42,16 +43,18 @@ def classify_image(img_path):
         img = image.resize((256, 256))
         img = img.convert('RGB')
         img = np.array(img) / 255.0
-        img = img.transpose((2, 0, 1))
-        img = torch.tensor(img, dtype=torch.float).unsqueeze(0)
+        img_tensor = torch.tensor(img, dtype=torch.float32)
+        img_tensor = img_tensor.permute(2, 0, 1)
+        img_tensor = img_tensor.unsqueeze(0)
+        print("img tensor shape: ", img_tensor.shape)
 
         dirty = False
 
         # Classify image as dirty or clean
         with torch.no_grad():
-            logits = model(img)
+            logits = model(img_tensor)
             print("model output: ", logits)
-            # predicted = 1 if torch.sum(output) > 0 else 0
+            # predicted = 1 if torch.sum(logits) > -0.15 else 0
             _, predicted = torch.max(logits, dim=1)
             dirty = not predicted # predicted is 1 if clean, 0 if dirty
             if dirty:
