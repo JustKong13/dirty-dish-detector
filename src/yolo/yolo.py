@@ -75,9 +75,9 @@ class YoloModel:
         print("True Negatives: ", self.tn)
 
 
-def __main__():
+if __name__ == "__main__":
     yoloModel = YoloModel()
-    yoloModel.load_images("data/clean_sink/", 0)
-    yoloModel.load_images("data/dirty_sink/", 1)
+    yoloModel.load_images("../../data/clean_sink/", 0)
+    yoloModel.load_images("../../data/dirty_sink/", 1)
     yoloModel.classify_images()
     yoloModel.print_results()
