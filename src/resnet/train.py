@@ -65,7 +65,7 @@ def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
 
             # if count >= 15:
             #     break
-
+            
             optimizer.zero_grad()
             preds = model(train_features) # saving all of our features
             train_loss = criterion(preds, train_labels.to(torch.long))

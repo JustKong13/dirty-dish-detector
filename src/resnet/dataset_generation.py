@@ -5,16 +5,17 @@ from sklearn.model_selection import train_test_split
 from augmentation import Contrast, HorizontalFlip, Rotate, Shift
 import torch
 from torch.utils.data import Dataset, DataLoader
+import random
 
 CLEAN_SINK_DIR = '../../data/clean_sink'
 DIRTY_SINK_DIR = '../../data/dirty_sink'
 
 shift_transform = Shift(max_shift=10)
-contrast_transform = Contrast(min_contrast=0.3, max_contrast=1.0)
+contrast_transform = Contrast(min_contrast=0.3, max_contrast=1)
 rotate_transform = Rotate(max_angle=10)
 horizontal_flip_transform = HorizontalFlip(p=0.5)
 
-train_transforms = [shift_transform, contrast_transform, rotate_transform, horizontal_flip_transform]
+train_transforms = [contrast_transform, rotate_transform]
 
 def load_data(folder_path): 
     images = []
@@ -37,14 +38,23 @@ def load_data(folder_path):
         img_tensor = torch.tensor(np.array(img), dtype=torch.float32) 
         img_tensor = img_tensor.permute(2, 0, 1) 
 
-        for transform in train_transforms: 
-            transformed_img = transform(img_tensor) # result of transform is 3 x h x w
-            channel_last_img = transformed_img.permute(1, 2, 0)
-            images.append(channel_last_img.numpy())
-            if folder_path == CLEAN_SINK_DIR: 
-                labels.append(1)
-            else: 
-                labels.append(0)
+        transform = random.choice(train_transforms)
+        transformed_img = transform(img_tensor) # result of transform is 3 x h x w
+        channel_last_img = transformed_img.permute(1, 2, 0)
+        images.append(channel_last_img.numpy())
+        if folder_path == CLEAN_SINK_DIR:
+            labels.append(1)
+        else:
+            labels.append(0)
+
+        # for transform in train_transforms: 
+        #     transformed_img = transform(img_tensor) # result of transform is 3 x h x w
+        #     channel_last_img = transformed_img.permute(1, 2, 0)
+        #     images.append(channel_last_img.numpy())
+        #     if folder_path == CLEAN_SINK_DIR: 
+        #         labels.append(1)
+        #     else: 
+        #         labels.append(0)
 
     return np.array(images), np.array(labels)
 
