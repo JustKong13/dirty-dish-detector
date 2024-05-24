@@ -6,13 +6,22 @@ import pickle
 import numpy as np
 from PIL import Image
 from dataset_generation import *
+from model import ResnetArchitecture
 
 # Model
-filename = '5_17_tuned_model_resnet.pkl'
-with open(filename, 'rb') as file:
-  resNetModel = pickle.load(file)
+# pickle approach
+# filename = 'unbias_tuned_model_resnet.pkl'
+# with open(filename, 'rb') as file:
+#   resNetModel = pickle.load(file)
 
+# resNetModel.eval()
+
+# torch approach
+filename = './models/unbias_tuned_model_resnet.pt'
+resNetModel = ResnetArchitecture()
+resNetModel.load_state_dict(torch.load(filename))
 resNetModel.eval()
+
 model = resNetModel
 
 def load_images(dataset, label):
@@ -56,7 +65,7 @@ def classify_image(img_path):
             print("model output: ", logits)
             # predicted = 1 if torch.sum(logits) > -0.15 else 0
             _, predicted = torch.max(logits, dim=1)
-            dirty = not predicted # predicted is 1 if clean, 0 if dirty
+            dirty = (predicted == 0) # predicted is 1 if clean, 0 if dirty
             if dirty:
                 predicted_dirty += 1
             else:

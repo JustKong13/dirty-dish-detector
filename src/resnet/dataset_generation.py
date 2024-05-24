@@ -15,7 +15,7 @@ contrast_transform = Contrast(min_contrast=0.3, max_contrast=1)
 rotate_transform = Rotate(max_angle=10)
 horizontal_flip_transform = HorizontalFlip(p=0.5)
 
-train_transforms = [contrast_transform, rotate_transform]
+train_transforms = [shift_transform, contrast_transform]
 
 def load_data(folder_path): 
     images = []
@@ -67,7 +67,7 @@ X = np.concatenate((clean_images, dirty_images))
 y = np.concatenate((clean_labels, dirty_labels))
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 1738)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.05, random_state = 1738)
 
 
 class SinkDataset(Dataset):
