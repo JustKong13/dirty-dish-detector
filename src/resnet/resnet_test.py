@@ -17,7 +17,7 @@ from model import ResnetArchitecture
 # resNetModel.eval()
 
 # torch approach
-filename = './models/unbias_tuned_model_resnet.pt'
+filename = './models/v3_unbias_tuned_model_resnet.pt'
 resNetModel = ResnetArchitecture()
 resNetModel.load_state_dict(torch.load(filename))
 resNetModel.eval()
