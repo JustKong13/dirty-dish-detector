@@ -13,6 +13,9 @@ class ResnetArchitecture(nn.Module):
         for param in self.resnet.parameters():
             param.requires_grad = False
 
+        for param in self.resnet.layer4.parameters():
+            param.requires_grad = True
+            
         self.fc1 = nn.Linear(1000, 512)
         self.bn1 = nn.BatchNorm1d(512)
         self.relu = nn.ReLU()
@@ -21,6 +24,7 @@ class ResnetArchitecture(nn.Module):
 
     def forward(self, x):
         x = self.resnet(x)
+        x = x.view(x.size(0), -1)
         x = self.fc1(x)
         x = self.bn1(x)
         x = self.relu(x)

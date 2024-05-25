@@ -4,12 +4,14 @@ from dataset_generation import *
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5)
-epochs = 5
+scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
+epochs = 2
 train_loss, val_loss, train_pred, pred, result_model = train(model, 
                                                  train_loader, 
                                                  test_loader, 
                                                  criterion, 
-                                                 optimizer, 
+                                                 optimizer,
+                                                 scheduler, 
                                                  epochs)
 
 print('train loss', train_loss)
@@ -19,4 +21,4 @@ print('validation accuracy', pred)
 
 
 # pkl.dump(result_model, open('unbias_tuned_model_resnet.pkl', 'wb'))
-torch.save(result_model.state_dict(), './models/v3_unbias_tuned_model_resnet.pt')
+torch.save(result_model.state_dict(), './models/v4_unbias_tuned_model_resnet.pt')

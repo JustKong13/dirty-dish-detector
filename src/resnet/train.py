@@ -45,7 +45,7 @@ def val(model, val_data_loader, criterion):
 
     return val_running_loss / len(val_data_loader), accuracy
 
-def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
+def train(model, data_loader, val_data_loader, criterion, optimizer, scheduler, epochs):
     train_loss_arr = []
     val_loss_arr = []
     train_pred_arr = []
@@ -91,6 +91,8 @@ def train(model, data_loader, val_data_loader, criterion, optimizer, epochs):
         if val_loss < min_val_loss: 
             min_val_loss = val_loss
             result_model = copy.deepcopy(model)
+        
+        scheduler.step()
 
     print('Training finished.')
     return train_loss_arr, val_loss_arr, train_pred_arr, pred_arr, result_model
